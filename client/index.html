@@ -17,13 +17,13 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
 
-        <link rel="icon" type="image/png" href="./assets/pesto.png">
+    <link rel="icon" type="image/png" href="./assets/pesto.png">
     <!-- Latest compiled JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <title>Pesto ToDo</title>
 
     <style>
-        .row{
+        .row {
             padding-top: 5%;
         }
     </style>
@@ -31,47 +31,145 @@
 
     <script>
 
-        function btnclick(val){
+        function btnclick(val) {
 
-            if(val === 'todo'){
+            if (val === 'todo') {
                 let element = document.getElementById('btn-progress');
                 element.innerHTML = 'Todo'
             }
-            else if(val === 'inprog'){
+            else if (val === 'inprog') {
                 let element = document.getElementById('btn-progress');
                 element.innerHTML = 'In-Progress'
             }
-            else if(val === 'compl'){
+            else if (val === 'compl') {
                 let element = document.getElementById('btn-progress');
                 element.innerHTML = 'Completed'
             }
-            
+
+        }
+
+        function pret(i,val) {
+            if (val === 'todo') {
+                console.log('This is a test');
+                document.getElementById(`btn-progress-${i}`).innerHTML = 'Todo'
+            }
+            else if(val === 'inprog'){
+                document.getElementById(`btn-progress-${i}`).innerHTML = 'In-Progress'
+            }
+            else if(val === 'compl'){
+                document.getElementById(`btn-progress-${i}`).innerHTML = 'Completed'
+            }
         }
 
 
-        function additem(){
-            let key = 1;
+        async function postData(url = "", data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: "POST", // Specify the HTTP method (e.g., GET, POST, PUT, DELETE)
+        mode: "cors", // Set the CORS mode (no-cors, cors, same-origin)
+        cache: "no-cache", // Specify caching behavior
+        credentials: "same-origin", // Include credentials (include, same-origin, omit)
+        headers: {
+            "Content-Type": "application/json", // Set the content type
+            // You can add more headers here if needed
+        },
+        redirect: "follow", // Specify how to handle redirects (manual, follow, error)
+        referrerPolicy: "no-referrer", // Specify the referrer policy
+        body: JSON.stringify(data), // Convert data to JSON and send it in the request body
+    });
+
+    // Parse the response content as JSON
+    return response.json();
+}
+
+
+
+      async  function additem() {
+           
+            const response = await fetch("http://localhost:3000/allItems");
+            const data = await response.json();
+            let key = data.length+1;
+            let value = document.getElementById("currtodo").value;
+            let prog  = document.getElementById("btn-progress").innerText.trim();
+            if(prog==='Progress'){
+                prog = "In-Progress";
+            }
+            console.log(key,value,prog);
+            const resp = await postData("http://localhost:3000/createEntity",{
+                key:key,
+                value:value,
+                progress:prog
+            });
+            console.log(resp);
+            document.getElementById('todolist').innerHTML="";
+            simple();
 
         }
+
+
+        async function clearAllItems(){
+            const response = await fetch("http://localhost:3000/deleteAll");
+            document.getElementById('todolist').innerHTML="";
+
+            simple();
+        }
+
+        function callHover() { }
 
         async function simple() {
             const response = await fetch("http://localhost:3000/allItems");
             const data = await response.json();
             console.log(data);
             let element = document.getElementById('todolist');
-            for(let i=0;i<data.length;i++){
-                let simple_li = `<li class="list-group-item">${data[i].value}</li>`;
-                let innerHtmlString = document.createElement('li');
+            for (let i = 0; i < data.length; i++) {
+                console.log(data[i].value)
+                let listOfInps = data[i].value.split("=>");
+                console.log(listOfInps);
+                let progofitem = listOfInps[1].trim();
+                let className = "primary"
+                if(progofitem==='Todo'){
+                    progofitem = 'Todo';
+
+                }
+                else if(progofitem==='In-Progress'){
+                    progofitem = 'In-Progress';
+                    className = "warning";
+                }
+                else if(progofitem==='Completed'){
+                    progofitem = 'Completed';
+                    className = "success";
+                }
+                let simple_li = `
+                <div class="input-group mt-3 mb-3">
+                    <button type="button" class="btn btn-${className} dropdown-toggle" id="btn-progress-${i}"
+                    data-bs-toggle="dropdown">
+                      ${progofitem}
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li onclick="
+                        pret(${i},'todo')
+                      "><a class="dropdown-item">Todo</a></li>
+                      <li onclick="
+                        pret(${i},'inprog')
+                      "><a class="dropdown-item">In Progress</a></li>
+                      <li onclick="
+                        pret(${i},'compl')
+                      ""><a class="dropdown-item">Completed</a></li>
+                    </ul>
+                    <input type="text" value="${listOfInps[0]}" class="form-control" placeholder="Todo goes here...!">
+                  </div>`;
+                let innerHtmlString = document.createElement('div');
                 innerHtmlString.innerHTML = simple_li;
                 element.appendChild(innerHtmlString)
             }
-            element.style.listStyleType='none';
+            element.style.listStyleType = 'none';
 
         }
 
     </script>
 
 </head>
+
 <body onload="simple()">
 
     <div class="container">
@@ -80,28 +178,30 @@
 
             </div>
             <div class="col-4">
-                <button type="button" class="btn btn-primary" onclick="additem()">Add</button>
                 <div class="input-group mt-3 mb-3">
                     <button type="button" class="btn btn-primary dropdown-toggle" id="btn-progress"
-                    data-bs-toggle="dropdown">
-                      Progress
+                        data-bs-toggle="dropdown">
+                        Progress
                     </button>
-                    <ul class="dropdown-menu">
-                      <li onclick="btnclick('todo')"><a class="dropdown-item">Todo</a></li>
-                      <li onclick="btnclick('inprog')"><a class="dropdown-item">In Progress</a></li>
-                      <li onclick="btnclick('compl')"><a class="dropdown-item">Completed</a></li>
+                    <ul class="dropdown-menu" id="curr-prog">
+                        <li onclick="btnclick('todo')"><a class="dropdown-item">Todo</a></li>
+                        <li onclick="btnclick('inprog')"><a class="dropdown-item">In Progress</a></li>
+                        <li onclick="btnclick('compl')"><a class="dropdown-item">Completed</a></li>
                     </ul>
-                    <input type="text" class="form-control" placeholder="Todo goes here...!">
-                  </div>
+                    <input type="text" id="currtodo" class="form-control" placeholder="Todo goes here...!">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="additem()">Add</button>
+                <button type="button" class="btn btn-danger" onclick="clearAllItems()">Clear All</button>
+                <div id="todolist">
 
-                  <ul class="list-group" id="todolist">
-                  </ul>
+                </div>
             </div>
             <div class="col-4">
 
             </div>
         </div>
-      </div>
+    </div>
 
 </body>
+
 </html>

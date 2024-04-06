@@ -3,7 +3,7 @@ module.exports={
     validatePayload:function(data){
         let key = data.key;
         let value = data.value;
-        if(key&&value){
+        if(key==0||key&&value){
             return APP_CONSTANTS.VALIDATION_SUCCESS;
         }else{
             return APP_CONSTANTS.VALIDATION_FAILURE;

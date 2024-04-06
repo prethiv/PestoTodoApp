@@ -3,8 +3,8 @@ const db = new Level('db')
 const CONSTANTS = require('../constants/appconstants');
 
 module.exports = {
-    createEntity: function (key, value) {
-        db.put(key, value, (err) => {
+    createEntity: function (key, value,prog) {
+        db.put(key, value+" => "+prog, (err) => {
             if (err) {
                 return CONSTANTS.DATABASE_STORE_ERR;
             } else {
@@ -39,13 +39,19 @@ module.exports = {
     },
     allItems:async function(res){
         let result = [];
-        for await (const [key, value] of db.iterator({ gt: 1 })) {
+        for await (const [key, value] of db.iterator({ gt: -1 })) {
             console.log('Key:', key, 'Value:', value);
             result.push({
                 key,value
             });
         }
         res.json(result);
+    },
+    clearAllItems:async function (res){
+        db.clear();
+        res.json({
+            msg:CONSTANTS.VALIDATION_SUCCESS
+        },200);
     }
 }
 

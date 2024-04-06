@@ -16,7 +16,7 @@ app.post('/createEntity', (req, res) => {
         let code = DATABASE_STORE_ERR;
         let tries = 1;
         while (code == DATABASE_STORE_ERR && tries < RETRY_CONSTANT) {
-            code = db_utility.createEntity(todo_item.key, todo_item.value);
+            code = db_utility.createEntity(todo_item.key, todo_item.value,todo_item.progress);
             tries++;
         }
         res.json({
@@ -68,6 +68,10 @@ app.post('/deleteEntity', (req, res) => {
 
 app.get('/allItems',(req,res)=>{
     db_utility.allItems(res);
+});
+
+app.get('/deleteAll',(req,res)=>{
+    db_utility.clearAllItems(res);
 });
 
 // Start the server
