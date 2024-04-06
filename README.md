@@ -4,7 +4,7 @@ Here to help you setup the project in local and test.
 
 To setup this project clone this github repo.
 
-Go to PESTODOAPP.
+Go to PestoTodoApp.
 
 cd serv
 
