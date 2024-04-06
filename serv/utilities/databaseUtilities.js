@@ -36,6 +36,16 @@ module.exports = {
                 
             }
         })
+    },
+    allItems:async function(res){
+        let result = [];
+        for await (const [key, value] of db.iterator({ gt: 1 })) {
+            console.log('Key:', key, 'Value:', value);
+            result.push({
+                key,value
+            });
+        }
+        res.json(result);
     }
 }
 

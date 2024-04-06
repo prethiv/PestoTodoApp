@@ -4,10 +4,10 @@ const db_utility = require('./utilities/databaseUtilities');
 let bodyParser = require('body-parser');
 const { DATABASE_STORE_ERR, RETRY_CONSTANT, VALIDATION_SUCCESS, VALIDATION_FAILURE, DATABASE_INSERTION_SUCCESS, DATABASE_READ_ERR, DATABASE_DELETE_ERR } = require('./constants/appconstants');
 const validation = require('./utilities/validationUtility');
-
+const  cors = require('cors')
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
-
+app.use(cors())
 app.post('/createEntity', (req, res) => {
     console.log(req.body);
     let todo_item = req.body;
@@ -64,6 +64,10 @@ app.post('/deleteEntity', (req, res) => {
             msg:VALIDATION_FAILURE
         },500);
     }
+});
+
+app.get('/allItems',(req,res)=>{
+    db_utility.allItems(res);
 });
 
 // Start the server
