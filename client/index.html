@@ -48,17 +48,40 @@
 
         }
 
-        function pret(i,val) {
+       async function pret(i,val) {
+        console.log("Tetsworld",i,val)
+            let status = '';
             if (val === 'todo') {
                 console.log('This is a test');
+                status = 'Todo';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'Todo'
             }
             else if(val === 'inprog'){
+                status = 'In-Progress';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'In-Progress'
             }
             else if(val === 'compl'){
+                status = 'Completed';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'Completed'
             }
+
+            const response = await fetch("http://localhost:3000/allItems");
+            const data = await response.json();
+            let valueAct = '';
+            for(let i1 =0;i1<data.length;i1++){
+                if(i1===i){
+                    valueAct = data[i1].value.split('=>')[0].trim();
+                    break;
+                }
+            }
+            const resp = await postData("http://localhost:3000/createEntity",{
+                key:i,
+                value:valueAct,
+                progress:status
+            });
+            document.getElementById('todolist').innerHTML="";
+            simple();
+
         }
 
 
@@ -88,7 +111,7 @@
            
             const response = await fetch("http://localhost:3000/allItems");
             const data = await response.json();
-            let key = data.length+1;
+            let key = data.length;
             let value = document.getElementById("currtodo").value;
             let prog  = document.getElementById("btn-progress").innerText.trim();
             if(prog==='Progress'){
