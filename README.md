@@ -18,3 +18,5 @@ All of these choices of frontend and backend are solely only for this project,ev
 Java8 & springboot and nodejs.
 
 Level DB is choosen for the sake of simplicity and setting up this project locally easily.
+
+![image](https://github.com/prethiv/PestoTodoApp/assets/70672242/5edcd626-1266-43fe-96f3-4a820fce6ffe)
