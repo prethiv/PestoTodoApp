@@ -18,10 +18,12 @@ module.exports = {
                 res.json({
                     value:CONSTANTS.DATABASE_READ_ERR
                 },200); 
+                return err;
             }else{
                 res.json({
                     value:val
                 },200);
+                return val;
             }
         });
     },
