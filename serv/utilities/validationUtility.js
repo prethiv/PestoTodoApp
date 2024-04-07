@@ -19,7 +19,7 @@ module.exports={
     },
     validateDeletePayload:function(data){
         let key = data.key; 
-        if(key){
+        if(key==0||key){
             return APP_CONSTANTS.VALIDATION_SUCCESS;
         }else{
             return APP_CONSTANTS.VALIDATION_FAILURE;

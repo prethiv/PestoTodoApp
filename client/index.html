@@ -48,19 +48,19 @@
 
         }
 
-       async function pret(i,val) {
-        console.log("Tetsworld",i,val)
+        async function pret(i, val) {
+            console.log("Tetsworld", i, val)
             let status = '';
             if (val === 'todo') {
                 console.log('This is a test');
                 status = 'Todo';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'Todo'
             }
-            else if(val === 'inprog'){
+            else if (val === 'inprog') {
                 status = 'In-Progress';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'In-Progress'
             }
-            else if(val === 'compl'){
+            else if (val === 'compl') {
                 status = 'Completed';
                 document.getElementById(`btn-progress-${i}`).innerHTML = 'Completed'
             }
@@ -68,85 +68,94 @@
             const response = await fetch("http://localhost:3000/allItems");
             const data = await response.json();
             let valueAct = '';
-            for(let i1 =0;i1<data.length;i1++){
-                if(i1===i){
+            for (let i1 = 0; i1 < data.length; i1++) {
+                if (i1 === i) {
                     valueAct = data[i1].value.split('=>')[0].trim();
                     break;
                 }
             }
-            const resp = await postData("http://localhost:3000/createEntity",{
-                key:i,
-                value:valueAct,
-                progress:status
+            const resp = await postData("http://localhost:3000/createEntity", {
+                key: i,
+                value: valueAct,
+                progress: status
             });
-            document.getElementById('todolist').innerHTML="";
+            document.getElementById('todolist').innerHTML = "";
             simple();
 
         }
 
 
         async function postData(url = "", data = {}) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-        method: "POST", // Specify the HTTP method (e.g., GET, POST, PUT, DELETE)
-        mode: "cors", // Set the CORS mode (no-cors, cors, same-origin)
-        cache: "no-cache", // Specify caching behavior
-        credentials: "same-origin", // Include credentials (include, same-origin, omit)
-        headers: {
-            "Content-Type": "application/json", // Set the content type
-            // You can add more headers here if needed
-        },
-        redirect: "follow", // Specify how to handle redirects (manual, follow, error)
-        referrerPolicy: "no-referrer", // Specify the referrer policy
-        body: JSON.stringify(data), // Convert data to JSON and send it in the request body
-    });
+            // Default options are marked with *
+            const response = await fetch(url, {
+                method: "POST", // Specify the HTTP method (e.g., GET, POST, PUT, DELETE)
+                mode: "cors", // Set the CORS mode (no-cors, cors, same-origin)
+                cache: "no-cache", // Specify caching behavior
+                credentials: "same-origin", // Include credentials (include, same-origin, omit)
+                headers: {
+                    "Content-Type": "application/json", // Set the content type
+                    // You can add more headers here if needed
+                },
+                redirect: "follow", // Specify how to handle redirects (manual, follow, error)
+                referrerPolicy: "no-referrer", // Specify the referrer policy
+                body: JSON.stringify(data), // Convert data to JSON and send it in the request body
+            });
 
-    // Parse the response content as JSON
-    return response.json();
-}
+            // Parse the response content as JSON
+            return response.json();
+        }
 
 
 
-      async  function additem() {
-           
+        async function additem() {
+
             const response = await fetch("http://localhost:3000/allItems");
             const data = await response.json();
             let key = data.length;
             let value = document.getElementById("currtodo").value;
-            let prog  = document.getElementById("btn-progress").innerText.trim();
-            if(prog==='Progress'){
+            let prog = document.getElementById("btn-progress").innerText.trim();
+            if (prog === 'Progress') {
                 prog = "In-Progress";
             }
-            console.log(key,value,prog);
-            const resp = await postData("http://localhost:3000/createEntity",{
-                key:key,
-                value:value,
-                progress:prog
+            console.log(key, value, prog);
+            const resp = await postData("http://localhost:3000/createEntity", {
+                key: key,
+                value: value,
+                progress: prog
             });
             console.log(resp);
-            document.getElementById('todolist').innerHTML="";
+            document.getElementById('todolist').innerHTML = "";
             simple();
 
         }
 
 
-        async function clearAllItems(){
+        async function clearAllItems() {
             const response = await fetch("http://localhost:3000/deleteAll");
-            document.getElementById('todolist').innerHTML="";
+            document.getElementById('todolist').innerHTML = "";
 
             simple();
         }
 
-       async function updateText(index,value,status){
-            let newValue = document.getElementById("textinp-"+index).value;
-            console.log("Inside update text",index,value,status,newValue);
-            const resp = await postData("http://localhost:3000/createEntity",{
-                key:index,
-                value:newValue,
-                progress:status
+        async function updateText(index, value, status) {
+            let newValue = document.getElementById("textinp-" + index).value;
+            console.log("Inside update text", index, value, status, newValue);
+            const resp = await postData("http://localhost:3000/createEntity", {
+                key: index,
+                value: newValue,
+                progress: status
             });
             console.log(resp);
-            document.getElementById('todolist').innerHTML="";
+            document.getElementById('todolist').innerHTML = "";
+            simple();
+        }
+
+        async function clearOneItem(index) {
+            console.log("Key to clear", index);
+            const resp = await postData("http://localhost:3000/deleteEntity", {
+                key: index
+            });
+            document.getElementById('todolist').innerHTML = "";
             simple();
         }
 
@@ -163,20 +172,19 @@
                 console.log(listOfInps);
                 let progofitem = listOfInps[1].trim();
                 let className = "primary"
-                if(progofitem==='Todo'){
+                if (progofitem === 'Todo') {
                     progofitem = 'Todo';
 
                 }
-                else if(progofitem==='In-Progress'){
+                else if (progofitem === 'In-Progress') {
                     progofitem = 'In-Progress';
                     className = "warning";
                 }
-                else if(progofitem==='Completed'){
+                else if (progofitem === 'Completed') {
                     progofitem = 'Completed';
                     className = "success";
                 }
-                let simple_li = `
-                <div class="input-group mt-3 mb-3">
+                let simple_li = `<div class="input-group mt-3 mb-3">
                     <button type="button" class="btn btn-${className} dropdown-toggle" id="btn-progress-${i}"
                     data-bs-toggle="dropdown">
                       ${progofitem}
@@ -193,7 +201,11 @@
                       ""><a class="dropdown-item">Completed</a></li>
                     </ul>
                     <input id="textinp-${i}" type="text" onchange="updateText(${i},'${listOfInps[0]}','${listOfInps[1]}')" value="${listOfInps[0]}" class="form-control" placeholder="Todo goes here...!">
-                  </div>`;
+                    <button onclick="clearOneItem(${data[i].key})" type="button" class="btn btn-danger" id="btn-close-${i}">
+                     X
+                    </button>
+                    </div>
+                  `;
                 let innerHtmlString = document.createElement('div');
                 innerHtmlString.innerHTML = simple_li;
                 element.appendChild(innerHtmlString)
